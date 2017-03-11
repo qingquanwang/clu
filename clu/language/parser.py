@@ -19,9 +19,12 @@ def init_dic(path):
                 with open(file_path, 'r') as file:
                     for line in file:
                         line = line.decode('utf-8').strip()
+                        if not line:
+                            continue
                         if line in dic:
-                            utilities.ll(u'发现重复的字典项: {}'.format(line))
-                            dic[line].append(dic_type)
+                            if dic_type not in dic[line]:
+                                utilities.ll(u'发现重复的字典项: {}'.format(line))
+                                dic[line].append(dic_type)
                         else:
                             dic[line] = [dic_type]
     return dic
