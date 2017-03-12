@@ -40,7 +40,7 @@ def get_list(keyword_list):
     temp = u''
     for keyword in keyword_list:
         temp += keyword
-    return u'[' + temp + u']'
+    return temp
 
 
 def find_longest_keyword(text, keywords, result, dic):
@@ -53,7 +53,7 @@ def find_longest_keyword(text, keywords, result, dic):
             candidate = text[0]
         if candidate in keywords:
             # print(candidate)
-            result += get_list(dic[candidate])
+            result += u'[' + candidate + u':' + get_list(dic[candidate]) + u']'
             # utilities.ll(result)
             if i < len(text) and i != 0:
                 return find_longest_keyword(text[(-1) * i:], keywords, result, dic)
