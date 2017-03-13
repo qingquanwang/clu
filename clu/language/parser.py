@@ -69,16 +69,21 @@ def parse_sentence(args):
     utilities.is_debug = True
     dic = init_dic(args[0])
     # utilities.ll(dic)
-    text = args[1]
-    # ngram查找所有匹配的关键词
-    keywords = []
-    for i in range(1, 5):
-        keywords.extend(getNgramsKeyord(text, i, dic))
-    utilities.ll(keywords)
-    # 用长度优先原则找到关键词组合
-    result = u''
-    result = find_longest_keyword(text, keywords, result, dic)
-    utilities.ll(result)
+
+    for line in sys.stdin.readlines():
+        line = line.strip().decode('utf-8')
+        if line != '':
+            text = line
+            # text = args[1]
+            # ngram查找所有匹配的关键词
+            keywords = []
+            for i in range(1, 5):
+                keywords.extend(getNgramsKeyord(text, i, dic))
+            utilities.ll(keywords)
+            # 用长度优先原则找到关键词组合
+            result = u''
+            result = find_longest_keyword(text, keywords, result, dic)
+            utilities.ll(result)
 
 
 def getNgramsKeyord(input, n, dic):
@@ -95,15 +100,19 @@ def getNgramsKeyord(input, n, dic):
 def list_sequences(args):
     utilities.is_debug = True
     dic = init_dic(args[0])
-    text = args[1]
-    # ngram查找所有匹配的关键词
-    keywords = []
-    for i in range(1, 5):
-        keywords.extend(getNgramsKeyord(text, i, dic))
-    utilities.ll(keywords)
-    # 列出所有可能的关键词组合
-    result = u''
-    list_sequence(text, keywords, result, dic)
+    # text = args[1]
+    for line in sys.stdin.readlines():
+        line = line.strip().decode('utf-8')
+        if line != '':
+            text = line
+            # ngram查找所有匹配的关键词
+            keywords = []
+            for i in range(1, 5):
+                keywords.extend(getNgramsKeyord(text, i, dic))
+            utilities.ll(keywords)
+            # 列出所有可能的关键词组合
+            result = u''
+            list_sequence(text, keywords, result, dic)
 
 
 def list_sequence(text, keywords, result, dic):
@@ -125,7 +134,7 @@ def list_sequence(text, keywords, result, dic):
         # 找出其它可能的keyword
         for keyword in keywords:
             if keyword in text:
-                if text.find(keyword) > start and text.find(keyword) < end and text.find(keyword) + len(keyword) > end:
+                if text.find(keyword) > start and text.find(keyword) + len(keyword) <= end:
                     start2 = text.find(keyword)
                     end2 = text.find(keyword) + len(keyword)
                     select2 = keyword
