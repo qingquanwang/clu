@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import utilities
 
 DIC_EXT = u'.txt'
@@ -64,7 +65,7 @@ def find_longest_keyword(text, keywords, result, dic):
     return find_longest_keyword(text[1:], keywords, result, dic)
 
 
-def parse_sentencen(args):
+def parse_sentence(args):
     utilities.is_debug = True
     dic = init_dic(args[0])
     # utilities.ll(dic)
@@ -89,3 +90,50 @@ def getNgramsKeyord(input, n, dic):
             output.append(ngramTemp)
     # utilities.ll(output)
     return output
+
+
+def list_sequences(args):
+    utilities.is_debug = True
+    dic = init_dic(args[0])
+    text = args[1]
+    # ngram查找所有匹配的关键词
+    keywords = []
+    for i in range(1, 5):
+        keywords.extend(getNgramsKeyord(text, i, dic))
+    utilities.ll(keywords)
+    # 列出所有可能的关键词组合
+    result = u''
+    list_sequence(text, keywords, result, dic)
+
+
+def list_sequence(text, keywords, result, dic):
+    utilities.ll(u'处理text: ' + text + u', result: ' + result)
+    # 找出第一个符合的keyword k1：start最小，end最大
+    start = sys.maxint
+    end = -1
+    select = u''
+    for keyword in keywords:
+        if keyword in text:
+            if text.find(keyword) < start or (text.find(keyword) == start and text.find(keyword) + len(keyword) > end):
+                start = text.find(keyword)
+                end = text.find(keyword) + len(keyword)
+                select = keyword
+    if select:
+        utilities.ll(u'找到select: ' + select)
+        result1 = result + text[0:start] + u'[' + select + u':' + get_list(dic[select]) + u']'
+        list_sequence(text[end:], keywords, result1, dic)
+        # 找出其它可能的keyword
+        for keyword in keywords:
+            if keyword in text:
+                if text.find(keyword) > start and text.find(keyword) < end and text.find(keyword) + len(keyword) > end:
+                    start2 = text.find(keyword)
+                    end2 = text.find(keyword) + len(keyword)
+                    select2 = keyword
+                    utilities.ll(u'找到与select: ' + select + u' 有交叉的keyword: ' + select2)
+                    result2 = result + text[0:start2] + u'[' + select2 + u':' + get_list(dic[select2]) + u']'
+                    list_sequence(text[end2:], keywords, result2, dic)
+        # 以下做法会导致重复，弃用
+        # result2 = result + text[0]
+        # list_sequence(text[1:], keywords, result2, dic)
+    else:
+        utilities.ll(u'未找到keyword, 打印结果: ' + result + text)
